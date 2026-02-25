@@ -61,11 +61,11 @@ fi
 
 # --- Remove sudoers file ------------------------------------------------------
 
-SUDOERS_FILE="/etc/sudoers.d/user-${USERNAME}"
-if [ -f "${SUDOERS_FILE}" ]; then
-    rm -f "${SUDOERS_FILE}"
-    log "Removed sudoers file."
-fi
+# SUDOERS_FILE="/etc/sudoers.d/user-${USERNAME}"
+# if [ -f "${SUDOERS_FILE}" ]; then
+#     rm -f "${SUDOERS_FILE}"
+#     log "Removed sudoers file."
+# fi
 
 # --- Remove from SSH AllowUsers -----------------------------------------------
 

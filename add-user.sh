@@ -21,14 +21,18 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-if [[ $# -ne 3 ]]; then
-    echo "Usage: $0 <username> <ssh-pubkey> <sudo-password>" >&2
+# if [[ $# -ne 3 ]]; then
+#     echo "Usage: $0 <username> <ssh-pubkey> <sudo-password>" >&2
+#     exit 1
+# fi
+if [[ $# -ne 2 ]]; then
+    echo "Usage: $0 <username> <ssh-pubkey>" >&2
     exit 1
 fi
 
 USERNAME="$1"
 SSH_PUBKEY="$2"
-SUDO_PASSWORD="$3"
+# SUDO_PASSWORD="$3"
 
 # --- Validate inputs ----------------------------------------------------------
 
@@ -50,15 +54,16 @@ fi
 # --- Create user --------------------------------------------------------------
 
 if id "${USERNAME}" &>/dev/null; then
-    log "User '${USERNAME}' already exists. Updating SSH key and password."
+    # log "User '${USERNAME}' already exists. Updating SSH key and password."
+    log "User '${USERNAME}' already exists. Updating SSH key."
 else
     adduser --disabled-password --gecos "" "${USERNAME}"
     log "Created user '${USERNAME}'."
 fi
 
 # Set password (needed for sudo authentication)
-echo "${USERNAME}:${SUDO_PASSWORD}" | chpasswd
-log "Password set for '${USERNAME}'."
+# echo "${USERNAME}:${SUDO_PASSWORD}" | chpasswd
+# log "Password set for '${USERNAME}'."
 
 # --- Set up SSH key -----------------------------------------------------------
 
@@ -72,12 +77,12 @@ log "SSH key installed."
 
 # --- Grant password-protected sudo --------------------------------------------
 
-tee "/etc/sudoers.d/user-${USERNAME}" > /dev/null <<EOF
-${USERNAME} ALL=(ALL:ALL) ALL
-EOF
-chmod 440 "/etc/sudoers.d/user-${USERNAME}"
-visudo -cf "/etc/sudoers.d/user-${USERNAME}"
-log "Sudo access granted (password required)."
+# tee "/etc/sudoers.d/user-${USERNAME}" > /dev/null <<EOF
+# ${USERNAME} ALL=(ALL:ALL) ALL
+# EOF
+# chmod 440 "/etc/sudoers.d/user-${USERNAME}"
+# visudo -cf "/etc/sudoers.d/user-${USERNAME}"
+# log "Sudo access granted (password required)."
 
 # --- Add to SSH AllowUsers ----------------------------------------------------
 
@@ -121,4 +126,4 @@ fi
 # --- Done ---------------------------------------------------------------------
 
 echo ""
-echo "User '${USERNAME}' is ready."
+echo "User '${USERNAME}' is ready (docker access only, no sudo)."
