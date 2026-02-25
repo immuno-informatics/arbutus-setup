@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# UFW configuration for the database server
+#
+# Allows SSH and PostgreSQL ONLY from known internal nodes.
+# All other inbound traffic is denied.
+#
+# Run once on the server.
+#
+# Usage: sudo ./firewall-setup.sh <internal-ip-range> <db-port>
+# ==============================================================================
+
+set -euo pipefail
+
+# Must run as root
+if [[ $EUID -ne 0 ]]; then
+    echo "Run this script with sudo." >&2
+    exit 1
+fi
+
+if [[ $# -ne 2 ]]; then
+    echo "Usage: $0 <internal-ip-range> <db-port>" >&2
+    exit 1
+fi
+
+INTERNAL_IP_RANGE="$1"
+DB_PORT="$2"
+
+# --- Reset UFW to clean state -------------------------------------------------
+
+ufw --force reset
+
+# --- Default policies ---------------------------------------------------------
+
+# Deny all incoming, allow all outgoing (the server needs to
+# reach the internet for apt updates, Docker pulls, etc.)
+
+ufw default deny incoming
+ufw default allow outgoing
+
+# --- Enabled connections ------------------------------------------------------
+
+# SSH (port 22)
+
+# ufw allow from "$TPALWEB_INTERNAL_IP" to any port 22 proto tcp comment "SSH from tpalweb"
+# ufw allow from "$MHC_ABBA_INTERNAL_IP" to any port 22 proto tcp comment "SSH from mhc-abba"
+ufw allow from "$INTERNAL_IP_RANGE" to any port 22 proto tcp comment "SSH"
+
+# PostgreSQL (port DB_PORT)
+
+# ufw allow from "$TPALWEB_INTERNAL_IP" to any port $DB_PORT proto tcp comment "PostgreSQL from tpalweb"
+# ufw allow from "$MHC_ABBA_INTERNAL_IP" to any port $DB_PORT proto tcp comment "PostgreSQL from mhc-abba"
+ufw allow from "$INTERNAL_IP_RANGE" to any port $DB_PORT proto tcp comment "PostgreSQL"
+
+# --- Enable -------------------------------------------------------------------
+
+ufw --force enable
+
+# --- Summary ------------------------------------------------------------------
+
+echo ""
+echo "Firewall configured. Current rules:"
+echo ""
+ufw status verbose
