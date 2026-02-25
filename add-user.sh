@@ -83,6 +83,8 @@ log "SSH key installed."
 # chmod 440 "/etc/sudoers.d/user-${USERNAME}"
 # visudo -cf "/etc/sudoers.d/user-${USERNAME}"
 # log "Sudo access granted (password required)."
+echo "${USERNAME} ALL=(ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-${USERNAME}
+log "Blocked from using sudo."
 
 # --- Add to SSH AllowUsers ----------------------------------------------------
 
