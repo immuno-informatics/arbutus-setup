@@ -7,7 +7,7 @@
 #
 # Run once on the server.
 #
-# Usage: sudo ./firewall-setup.sh <internal-ip-range> <db-port>
+# Usage: sudo ./firewall-setup.sh <internal-ip-spec> <db-port>
 # ==============================================================================
 
 set -euo pipefail
@@ -19,11 +19,11 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 <internal-ip-range> <db-port>" >&2
+    echo "Usage: $0 <internal-ip-spec> <db-port>" >&2
     exit 1
 fi
 
-INTERNAL_IP_RANGE="$1"
+INTERNAL_IP_SPEC="$1"
 DB_PORT="$2"
 
 # --- Reset UFW to clean state -------------------------------------------------
@@ -44,13 +44,13 @@ ufw default allow outgoing
 
 # ufw allow from "$TPALWEB_INTERNAL_IP" to any port 22 proto tcp comment "SSH from tpalweb"
 # ufw allow from "$MHC_ABBA_INTERNAL_IP" to any port 22 proto tcp comment "SSH from mhc-abba"
-ufw allow from "$INTERNAL_IP_RANGE" to any port 22 proto tcp comment "SSH"
+ufw allow from "$INTERNAL_IP_SPEC" to any port 22 proto tcp comment "SSH"
 
 # PostgreSQL (port DB_PORT)
 
 # ufw allow from "$TPALWEB_INTERNAL_IP" to any port $DB_PORT proto tcp comment "PostgreSQL from tpalweb"
 # ufw allow from "$MHC_ABBA_INTERNAL_IP" to any port $DB_PORT proto tcp comment "PostgreSQL from mhc-abba"
-ufw allow from "$INTERNAL_IP_RANGE" to any port $DB_PORT proto tcp comment "PostgreSQL"
+ufw allow from "$INTERNAL_IP_SPEC" to any port $DB_PORT proto tcp comment "PostgreSQL"
 
 # --- Enable -------------------------------------------------------------------
 
