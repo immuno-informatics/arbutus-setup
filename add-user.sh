@@ -83,7 +83,10 @@ log "SSH key installed."
 # chmod 440 "/etc/sudoers.d/user-${USERNAME}"
 # visudo -cf "/etc/sudoers.d/user-${USERNAME}"
 # log "Sudo access granted (password required)."
-echo "${USERNAME} ALL=(ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-${USERNAME}
+printf '%s\n' "Defaults:${USERNAME} !authenticate" "${USERNAME} ALL=(ALL:ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-"$USERNAME" > /dev/null
+# printf '%s\n' "Defaults:$USERNAME !authenticate" "$USERNAME ALL=(ALL:ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-"$USERNAME"
+# echo "${USERNAME} ALL=(ALL:ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-"${USERNAME}"
+# echo "${USERNAME} ALL=(ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-${USERNAME}
 log "Blocked from using sudo."
 
 # --- Add to SSH AllowUsers ----------------------------------------------------
@@ -120,7 +123,7 @@ GROUP_NAME="docker"
 
 if getent group "$GROUP_NAME" > /dev/null 2>&1; then
     usermod -aG "$GROUP_NAME" "$USERNAME"
-    log "Added ${USERNAME} to ${GROUP_NAME} group."
+    log "Added '${USERNAME}' to ${GROUP_NAME} group."
 else
     log "WARNING: ${GROUP_NAME} group not found. Run install-apps.sh first."
 fi
