@@ -1,5 +1,7 @@
 # arbutus-setup
 
+Scripts for setting up cloud instances.
+
 Order of init node setup:
 
 1. `sudo bash install-apps.sh`&mdash;installs everything

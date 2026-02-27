@@ -15,34 +15,6 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-# --- System updates -----------------------------------------------------------
-
-# apt update
-# apt -y upgrade
-
-# --- Automatic security updates -----------------------------------------------
-
-# Installs security patches automatically.
-# Unattended-upgrades handles only security updates
-# by default - not full dist-upgrades, so it won't break
-# things with major version changes.
-
-# apt -y install unattended-upgrades
-# dpkg-reconfigure -f noninteractive unattended-upgrades
-
-# --- Fail2Ban -----------------------------------------------------------------
-
-# Monitors SSH login attempts and bans IPs after repeated failures.
-# Uses sensible defaults (5 failures = 10 min ban).
-
-# apt -y install fail2ban
-# systemctl enable fail2ban
-# systemctl start fail2ban
-
-# --- GNU make -----------------------------------------------------------------
-
-# apt -y install make
-
 # --- Docker installation ------------------------------------------------------
 
 apt -y install ca-certificates curl

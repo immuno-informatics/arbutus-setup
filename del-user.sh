@@ -2,7 +2,7 @@
 # ==============================================================================
 # Delete user script
 #
-# Removes the user, their home directory, sudo access, and SSH AllowUsers entry.
+# Removes the user, their home directory, sudo config, and SSH AllowUsers entry.
 #
 # Usage: sudo ./del-user.sh <username>
 # ==============================================================================

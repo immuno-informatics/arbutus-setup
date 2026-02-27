@@ -4,11 +4,11 @@
 #
 # Creates a user with:
 #   - SSH key authentication
-#   - Password-protected sudo access
+#   - Blocked sudo access
 #   - Added to AllowUsers in SSH config
 #   - Added to docker group
 #
-# Usage: sudo ./add-user.sh <username> <ssh-pubkey> <sudo-password>
+# Usage: sudo ./add-user.sh <username> <ssh-pubkey>
 # ==============================================================================
 
 set -euo pipefail
@@ -21,10 +21,6 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-# if [[ $# -ne 3 ]]; then
-#     echo "Usage: $0 <username> <ssh-pubkey> <sudo-password>" >&2
-#     exit 1
-# fi
 if [[ $# -ne 2 ]]; then
     echo "Usage: $0 <username> <ssh-pubkey>" >&2
     exit 1
@@ -32,7 +28,6 @@ fi
 
 USERNAME="$1"
 SSH_PUBKEY="$2"
-# SUDO_PASSWORD="$3"
 
 # --- Validate inputs ----------------------------------------------------------
 
@@ -54,16 +49,11 @@ fi
 # --- Create user --------------------------------------------------------------
 
 if id "${USERNAME}" &>/dev/null; then
-    # log "User '${USERNAME}' already exists. Updating SSH key and password."
     log "User '${USERNAME}' already exists. Updating SSH key."
 else
     adduser --disabled-password --gecos "" "${USERNAME}"
     log "Created user '${USERNAME}'."
 fi
-
-# Set password (needed for sudo authentication)
-# echo "${USERNAME}:${SUDO_PASSWORD}" | chpasswd
-# log "Password set for '${USERNAME}'."
 
 # --- Set up SSH key -----------------------------------------------------------
 
@@ -75,18 +65,10 @@ chmod 600 "${SSH_DIR}/authorized_keys"
 chown -R "${USERNAME}:${USERNAME}" "${SSH_DIR}"
 log "SSH key installed."
 
-# --- Grant password-protected sudo --------------------------------------------
+# --- Block sudo ---------------------------------------------------------------
 
-# tee "/etc/sudoers.d/user-${USERNAME}" > /dev/null <<EOF
-# ${USERNAME} ALL=(ALL:ALL) ALL
-# EOF
-# chmod 440 "/etc/sudoers.d/user-${USERNAME}"
-# visudo -cf "/etc/sudoers.d/user-${USERNAME}"
-# log "Sudo access granted (password required)."
 printf '%s\n' "Defaults:${USERNAME} !authenticate" "${USERNAME} ALL=(ALL:ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-"$USERNAME" > /dev/null
-# printf '%s\n' "Defaults:$USERNAME !authenticate" "$USERNAME ALL=(ALL:ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-"$USERNAME"
-# echo "${USERNAME} ALL=(ALL:ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-"${USERNAME}"
-# echo "${USERNAME} ALL=(ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-${USERNAME}
+
 log "Blocked from using sudo."
 
 # --- Add to SSH AllowUsers ----------------------------------------------------

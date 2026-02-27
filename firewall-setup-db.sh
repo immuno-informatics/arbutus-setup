@@ -42,14 +42,10 @@ ufw default allow outgoing
 
 # SSH (port 22)
 
-# ufw allow from "$TPALWEB_INTERNAL_IP" to any port 22 proto tcp comment "SSH from tpalweb"
-# ufw allow from "$MHC_ABBA_INTERNAL_IP" to any port 22 proto tcp comment "SSH from mhc-abba"
 ufw allow from "$INTERNAL_IP_SPEC" to any port 22 proto tcp comment "SSH"
 
 # PostgreSQL (port DB_PORT)
 
-# ufw allow from "$TPALWEB_INTERNAL_IP" to any port $DB_PORT proto tcp comment "PostgreSQL from tpalweb"
-# ufw allow from "$MHC_ABBA_INTERNAL_IP" to any port $DB_PORT proto tcp comment "PostgreSQL from mhc-abba"
 ufw allow from "$INTERNAL_IP_SPEC" to any port $DB_PORT proto tcp comment "PostgreSQL"
 
 # --- Enable -------------------------------------------------------------------
