@@ -11,27 +11,29 @@ log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
 # Must run as root
 if [[ $EUID -ne 0 ]]; then
-    echo "Run this script with sudo." >&2
-    exit 1
+  echo "Run this script with sudo." >&2
+  exit 1
 fi
 
 if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 <path>" >&2
-    exit 1
+  echo "Usage: $0 <path>" >&2
+  exit 1
 fi
 
 PROJECT_PATH="$1"
 
 GROUP_NAME="docker"
 
-if getent group "$GROUP_NAME" > /dev/null 2>&1; then
-    mkdir -p "$PROJECT_PATH"
+if getent group "$GROUP_NAME" >/dev/null 2>&1; then
+  mkdir -p "$PROJECT_PATH"
 
-    chown -R root:$GROUP_NAME "$PROJECT_PATH"
-    chmod -R 770 "$PROJECT_PATH"
-    chmod g+s "$PROJECT_PATH"
+  chown -R root:$GROUP_NAME "$PROJECT_PATH"
+  chmod -R 770 "$PROJECT_PATH"
+  chmod g+s "$PROJECT_PATH"
 
-    log "Directory '${PROJECT_PATH}' created."
+  echo " "
+  log "Directory '${PROJECT_PATH}' created."
 else
-    log "WARNING: ${GROUP_NAME} group not found. Run install-apps.sh first."
+  echo " "
+  log "WARNING: ${GROUP_NAME} group not found. Run install-apps.sh first."
 fi

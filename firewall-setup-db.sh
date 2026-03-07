@@ -14,13 +14,13 @@ set -euo pipefail
 
 # Must run as root
 if [[ $EUID -ne 0 ]]; then
-    echo "Run this script with sudo." >&2
-    exit 1
+  echo "Run this script with sudo." >&2
+  exit 1
 fi
 
 if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 <internal-ip-spec> <db-port>" >&2
-    exit 1
+  echo "Usage: $0 <internal-ip-spec> <db-port>" >&2
+  exit 1
 fi
 
 INTERNAL_IP_SPEC="$1"
@@ -46,7 +46,7 @@ ufw allow from "$INTERNAL_IP_SPEC" to any port 22 proto tcp comment "SSH"
 
 # PostgreSQL (port DB_PORT)
 
-ufw allow from "$INTERNAL_IP_SPEC" to any port $DB_PORT proto tcp comment "PostgreSQL"
+ufw allow from "$INTERNAL_IP_SPEC" to any port "$DB_PORT" proto tcp comment "PostgreSQL"
 
 # --- Enable -------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ ufw --force enable
 
 # --- Summary ------------------------------------------------------------------
 
-echo ""
+echo " "
 echo "Firewall configured. Current rules:"
-echo ""
+echo " "
 ufw status verbose

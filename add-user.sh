@@ -17,13 +17,13 @@ log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
 # Must run as root
 if [[ $EUID -ne 0 ]]; then
-    echo "Run this script with sudo." >&2
-    exit 1
+  echo "Run this script with sudo." >&2
+  exit 1
 fi
 
 if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 <username> <ssh-pubkey>" >&2
-    exit 1
+  echo "Usage: $0 <username> <ssh-pubkey>" >&2
+  exit 1
 fi
 
 USERNAME="$1"
@@ -32,34 +32,34 @@ SSH_PUBKEY="$2"
 # --- Validate inputs ----------------------------------------------------------
 
 if [[ "$USERNAME" == "ubuntu" ]]; then
-    echo "Cannot modify the 'ubuntu' admin account with this script." >&2
-    exit 1
+  echo "Cannot modify the 'ubuntu' admin account with this script." >&2
+  exit 1
 fi
 
 if ! [[ "$USERNAME" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]]; then
-    echo "Invalid username. Use lowercase letters, numbers, hyphens, underscores." >&2
-    exit 1
+  echo "Invalid username. Use lowercase letters, numbers, hyphens, underscores." >&2
+  exit 1
 fi
 
 if ! [[ "$SSH_PUBKEY" =~ ^ssh- ]]; then
-    echo "SSH public key should start with 'ssh-'. Did you pass the public key?" >&2
-    exit 1
+  echo "SSH public key should start with 'ssh-'. Did you pass the public key?" >&2
+  exit 1
 fi
 
 # --- Create user --------------------------------------------------------------
 
 if id "${USERNAME}" &>/dev/null; then
-    log "User '${USERNAME}' already exists. Updating SSH key."
+  log "User '${USERNAME}' already exists. Updating SSH key."
 else
-    adduser --disabled-password --gecos "" "${USERNAME}"
-    log "Created user '${USERNAME}'."
+  adduser --disabled-password --gecos "" "${USERNAME}"
+  log "Created user '${USERNAME}'."
 fi
 
 # --- Set up SSH key -----------------------------------------------------------
 
 SSH_DIR="/home/${USERNAME}/.ssh"
 mkdir -p "${SSH_DIR}"
-echo "${SSH_PUBKEY}" > "${SSH_DIR}/authorized_keys"
+echo "${SSH_PUBKEY}" >"${SSH_DIR}/authorized_keys"
 chmod 700 "${SSH_DIR}"
 chmod 600 "${SSH_DIR}/authorized_keys"
 chown -R "${USERNAME}:${USERNAME}" "${SSH_DIR}"
@@ -67,7 +67,7 @@ log "SSH key installed."
 
 # --- Block sudo ---------------------------------------------------------------
 
-printf '%s\n' "Defaults:${USERNAME} !authenticate" "${USERNAME} ALL=(ALL:ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-"$USERNAME" > /dev/null
+printf '%s\n' "Defaults:${USERNAME} !authenticate" "${USERNAME} ALL=(ALL:ALL) !ALL" | EDITOR="tee" visudo -f /etc/sudoers.d/user-"$USERNAME" >/dev/null
 
 log "Blocked from using sudo."
 
@@ -76,41 +76,41 @@ log "Blocked from using sudo."
 HARDENING_CONF="/etc/ssh/sshd_config.d/99-hardening.conf"
 
 if [ -f "${HARDENING_CONF}" ]; then
-    if grep -q "^AllowUsers" "${HARDENING_CONF}"; then
-        # Append to existing AllowUsers line (if not already listed)
-        if ! grep -q "AllowUsers.*\b${USERNAME}\b" "${HARDENING_CONF}"; then
-            sed -i "s/^AllowUsers.*/& ${USERNAME}/" "${HARDENING_CONF}"
-            log "Added '${USERNAME}' to AllowUsers."
-        else
-            log "'${USERNAME}' already in AllowUsers."
-        fi
+  if grep -q "^AllowUsers" "${HARDENING_CONF}"; then
+    # Append to existing AllowUsers line (if not already listed)
+    if ! grep -q "AllowUsers.*\b${USERNAME}\b" "${HARDENING_CONF}"; then
+      sed -i "s/^AllowUsers.*/& ${USERNAME}/" "${HARDENING_CONF}"
+      log "Added '${USERNAME}' to AllowUsers."
     else
-        echo "AllowUsers ${USERNAME}" >> "${HARDENING_CONF}"
-        log "Created AllowUsers with '${USERNAME}'."
+      log "'${USERNAME}' already in AllowUsers."
     fi
+  else
+    echo "AllowUsers ${USERNAME}" >>"${HARDENING_CONF}"
+    log "Created AllowUsers with '${USERNAME}'."
+  fi
 
-    # Reload SSH to pick up the new AllowUsers
-    if systemctl is-active --quiet ssh; then
-        systemctl reload ssh
-    elif systemctl is-active --quiet ssh.socket; then
-        systemctl restart ssh.socket
-    fi
+  # Reload SSH to pick up the new AllowUsers
+  if systemctl is-active --quiet ssh; then
+    systemctl reload ssh
+  elif systemctl is-active --quiet ssh.socket; then
+    systemctl restart ssh.socket
+  fi
 else
-    log "WARNING: ${HARDENING_CONF} not found. Run harden.sh first."
+  log "WARNING: ${HARDENING_CONF} not found. Run harden.sh first."
 fi
 
 # --- Add to docker group ------------------------------------------------------
 
 GROUP_NAME="docker"
 
-if getent group "$GROUP_NAME" > /dev/null 2>&1; then
-    usermod -aG "$GROUP_NAME" "$USERNAME"
-    log "Added '${USERNAME}' to ${GROUP_NAME} group."
+if getent group "$GROUP_NAME" >/dev/null 2>&1; then
+  usermod -aG "$GROUP_NAME" "$USERNAME"
+  log "Added '${USERNAME}' to ${GROUP_NAME} group."
 else
-    log "WARNING: ${GROUP_NAME} group not found. Run install-apps.sh first."
+  log "WARNING: ${GROUP_NAME} group not found. Run install-apps.sh first."
 fi
 
 # --- Done ---------------------------------------------------------------------
 
-echo ""
+echo " "
 echo "User '${USERNAME}' is ready (docker access only, no sudo)."

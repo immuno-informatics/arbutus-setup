@@ -14,8 +14,8 @@ set -euo pipefail
 
 # Must run as root
 if [[ $EUID -ne 0 ]]; then
-    echo "Run this script with sudo." >&2
-    exit 1
+  echo "Run this script with sudo." >&2
+  exit 1
 fi
 
 # --- Reset UFW to clean state -------------------------------------------------
@@ -47,7 +47,7 @@ ufw --force enable
 
 # --- Summary ------------------------------------------------------------------
 
-echo ""
+echo " "
 echo "Firewall configured. Current rules:"
-echo ""
+echo " "
 ufw status verbose
