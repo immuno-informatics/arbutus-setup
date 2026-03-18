@@ -2,7 +2,7 @@
 # ==============================================================================
 # UFW configuration for the web server
 #
-# Allows SSH from anywhere, HTTP/HTTPS from anywhere.
+# Allows SSH and HTTP/HTTPS from anywhere.
 # All outbound traffic is allowed (S3, DB, apt, Docker pulls).
 #
 # Run once on the server.
@@ -36,7 +36,7 @@ ufw default allow outgoing
 
 ufw allow 22/tcp comment "SSH"
 
-# HTTP / HTTPS (ports 80, 443)
+# HTTP / HTTPS (ports 80 / 443)
 
 ufw allow 80/tcp comment "HTTP"
 ufw allow 443/tcp comment "HTTPS"

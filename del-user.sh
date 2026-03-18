@@ -4,7 +4,7 @@
 #
 # Removes the user, their home directory, sudo config, and SSH AllowUsers entry.
 #
-# Usage: sudo ./del-user.sh <username>
+# Usage: sudo ./del-user.sh <USERNAME>
 # ==============================================================================
 
 set -euo pipefail
@@ -18,7 +18,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [[ $# -ne 1 ]]; then
-  echo "Usage: $0 <username>" >&2
+  echo "Usage: $0 <USERNAME>" >&2
   exit 1
 fi
 

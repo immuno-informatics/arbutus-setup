@@ -2,7 +2,7 @@
 # ==============================================================================
 # Additional configuration for the web server
 #
-# Usage: sudo ./additional-setup-web.sh <tls_renew_script> <tls_renew_log>
+# Usage: sudo ./additional-setup-web.sh <TLS_RENEW_SCRIPT> <TLS_RENEW_LOG>
 # ==============================================================================
 
 set -euo pipefail
@@ -16,7 +16,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [[ $# -ne 2 ]]; then
-  echo "Usage: $0 <tls_renew_script> <tls_renew_log>" >&2
+  echo "Usage: $0 <TLS_RENEW_SCRIPT> <TLS_RENEW_LOG>" >&2
   exit 1
 fi
 

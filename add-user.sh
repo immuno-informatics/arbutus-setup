@@ -8,7 +8,7 @@
 #   - Added to AllowUsers in SSH config
 #   - Added to docker group
 #
-# Usage: sudo ./add-user.sh <username> <ssh-pubkey>
+# Usage: sudo ./add-user.sh <USERNAME> <SSH_PUBKEY>
 # ==============================================================================
 
 set -euo pipefail
@@ -22,7 +22,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [[ $# -ne 2 ]]; then
-  echo "Usage: $0 <username> <ssh-pubkey>" >&2
+  echo "Usage: $0 <USERNAME> <SSH_PUBKEY>" >&2
   exit 1
 fi
 

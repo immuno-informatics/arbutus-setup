@@ -2,7 +2,7 @@
 # ==============================================================================
 # Create the main project directory with proper permissions
 #
-# Usage: sudo ./create-project-dir.sh <path>
+# Usage: sudo ./create-project-dir.sh <PATH>
 # ==============================================================================
 
 set -euo pipefail
@@ -16,7 +16,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [[ $# -ne 1 ]]; then
-  echo "Usage: $0 <path>" >&2
+  echo "Usage: $0 <PATH>" >&2
   exit 1
 fi
 

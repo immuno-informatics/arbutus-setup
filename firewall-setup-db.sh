@@ -2,12 +2,12 @@
 # ==============================================================================
 # UFW configuration for the database server
 #
-# Allows SSH and PostgreSQL ONLY from known internal nodes.
+# Allows SSH and database port ONLY from known internal nodes.
 # All other inbound traffic is denied.
 #
 # Run once on the server.
 #
-# Usage: sudo ./firewall-setup.sh <internal-ip-spec> <db-port>
+# Usage: sudo ./firewall-setup-db.sh <INTERNAL_IP_SPEC> <DB_PORT>
 # ==============================================================================
 
 set -euo pipefail
@@ -19,9 +19,11 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [[ $# -ne 2 ]]; then
-  echo "Usage: $0 <internal-ip-spec> <db-port>" >&2
+  echo "Usage: $0 <INTERNAL_IP_SPEC> <DB_PORT>" >&2
   exit 1
 fi
+
+DB_NAME="PostgreSQL"
 
 INTERNAL_IP_SPEC="$1"
 DB_PORT="$2"
@@ -44,9 +46,9 @@ ufw default allow outgoing
 
 ufw allow from "$INTERNAL_IP_SPEC" to any port 22 proto tcp comment "SSH"
 
-# PostgreSQL (port DB_PORT)
+# Database access (port DB_PORT)
 
-ufw allow from "$INTERNAL_IP_SPEC" to any port "$DB_PORT" proto tcp comment "PostgreSQL"
+ufw allow from "$INTERNAL_IP_SPEC" to any port "$DB_PORT" proto tcp comment "$DB_NAME"
 
 # --- Enable -------------------------------------------------------------------
 
