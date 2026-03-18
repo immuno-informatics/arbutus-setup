@@ -20,7 +20,7 @@ TLS_RENEW_LOG="$2"
 # --- Set a cron job to refresh TLS certificates (UTC) -------------------------
 
 (
-  crontab -l 2>/dev/null
+  crontab -l 2>/dev/null || true
   echo "0 10,22 * * * bash \"${TLS_RENEW_SCRIPT}\" >>\"${TLS_RENEW_LOG}\" 2>&1"
 ) | crontab -
 
