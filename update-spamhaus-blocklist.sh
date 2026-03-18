@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # ==============================================================================
 # Downloads Spamhaus DROP and EDROP lists and loads them into ipset/iptables
 #
