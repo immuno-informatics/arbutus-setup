@@ -1,13 +1,23 @@
 {
     "cSpell.words": [
         "adduser",
+        "blocklist",
         "buildx",
         "deluser",
+        "EDROP",
+        "gsub",
+        "ipsets",
+        "journalctl",
         "logname",
+        "maxelem",
+        "netblocks",
         "NOPASSWD",
         "passwordless",
         "pkill",
         "publickey",
+        "rulenum",
+        "spamhaus",
+        "suballocations",
         "tpalweb",
         "userdel"
     ]
