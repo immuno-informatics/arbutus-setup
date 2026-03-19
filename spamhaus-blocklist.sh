@@ -4,7 +4,7 @@
 #
 # Designed to run via cron (recommended: daily).
 #
-# Requirements: ipset, iptables, curl (or wget)
+# Requirements: ipset, iptables, curl
 #
 # Installation:
 #   1. Copy to /usr/local/sbin/spamhaus-blocklist.sh
@@ -215,7 +215,7 @@ restore() {
     log "INFO" "Restored ipset from saved state"
   else
     log "WARN" "No saved state found -- run a full update first"
-    main
+    update
   fi
 }
 
@@ -279,7 +279,7 @@ uninstall() {
 # ------------------------------------------------------------------------------
 # Main
 # ------------------------------------------------------------------------------
-main() {
+update() {
   rotate_log
   log "INFO" "=== Starting Spamhaus blocklist update ==="
   preflight
@@ -292,7 +292,7 @@ main() {
 # CLI
 # ------------------------------------------------------------------------------
 case "${1:-}" in
-update) main ;;
+update) update ;;
 restore)
   preflight
   restore
