@@ -11,8 +11,8 @@
 #   2. chmod 700 /usr/local/sbin/spamhaus-blocklist.sh
 #   3. Add cron entry with: /usr/local/sbin/spamhaus-blocklist.sh update
 #   4. Ensure it restores on reboot with: /usr/local/sbin/spamhaus-blocklist.sh restore
-#   5. Run once manually to verify: sudo ./spamhaus-blocklist.sh update
-#   6. Check current status with: sudo ./spamhaus-blocklist.sh status
+#   5. Run once manually to verify: sudo /usr/local/sbin/spamhaus-blocklist.sh update
+#   6. Check current status with: sudo /usr/local/sbin/spamhaus-blocklist.sh status
 #
 # Spamhaus DROP  = "Don't Route Or Peer" -- hijacked/leased netblocks
 # Spamhaus EDROP = Extended DROP -- suballocations of DROP-listed ranges
