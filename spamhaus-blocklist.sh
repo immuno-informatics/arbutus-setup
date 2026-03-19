@@ -7,15 +7,17 @@
 # Requirements: ipset, iptables, curl (or wget)
 #
 # Installation:
-#   1. Copy to /usr/local/sbin/update-spamhaus-blocklist.sh
-#   2. chmod 700 /usr/local/sbin/update-spamhaus-blocklist.sh
-#   3. Add cron entry with: /usr/local/sbin/update-spamhaus-blocklist.sh update
-#   4. Ensure it restores on reboot with: /usr/local/sbin/update-spamhaus-blocklist.sh restore
-#   5. Run once manually to verify: sudo ./update-spamhaus-blocklist.sh
-#   6. Check current status with: sudo ./update-spamhaus-blocklist.sh status
+#   1. Copy to /usr/local/sbin/spamhaus-blocklist.sh
+#   2. chmod 700 /usr/local/sbin/spamhaus-blocklist.sh
+#   3. Add cron entry with: /usr/local/sbin/spamhaus-blocklist.sh update
+#   4. Ensure it restores on reboot with: /usr/local/sbin/spamhaus-blocklist.sh restore
+#   5. Run once manually to verify: sudo ./spamhaus-blocklist.sh update
+#   6. Check current status with: sudo ./spamhaus-blocklist.sh status
 #
 # Spamhaus DROP  = "Don't Route Or Peer" -- hijacked/leased netblocks
 # Spamhaus EDROP = Extended DROP -- suballocations of DROP-listed ranges
+#
+# Usage: sudo ./spamhaus-blocklist.sh {update|restore|status|uninstall}
 # ==============================================================================
 
 set -euo pipefail
@@ -35,7 +37,7 @@ STATE_DIR="/var/lib/spamhaus"
 CACHE_DIR="${STATE_DIR}/cache"
 LOG_FILE="/var/log/spamhaus-blocklist.log"
 
-MAX_LOG_SIZE=$((5 * 1024 * 1024)) # 5 MB log rotation threshold
+MAX_LOG_SIZE=$((10 * 1024 * 1024)) # 10 MB log rotation threshold
 
 # ------------------------------------------------------------------------------
 # Logging
@@ -228,7 +230,7 @@ status() {
     echo "Set '${IPSET_NAME}': ${count} entries"
     echo ""
     echo "Header:"
-    ipset list "$IPSET_NAME" | head -7
+    ipset list "$IPSET_NAME" | head -7 || true
   else
     echo "Set '${IPSET_NAME}' does not exist"
   fi
@@ -289,7 +291,7 @@ main() {
 # ------------------------------------------------------------------------------
 # CLI
 # ------------------------------------------------------------------------------
-case "${1:-update}" in
+case "${1:-}" in
 update) main ;;
 restore)
   preflight
@@ -302,8 +304,8 @@ uninstall)
   ;;
 *)
   echo "Usage: $0 {update|restore|status|uninstall}"
-  echo ""
-  echo "  update     Download lists and apply blocklist (default)"
+  echo " "
+  echo "  update     Download lists and apply blocklist"
   echo "  restore    Restore saved ipset rules (for boot)"
   echo "  status     Show current blocklist status and recent blocks"
   echo "  uninstall  Remove all rules, chains, and ipsets"
